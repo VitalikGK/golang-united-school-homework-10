@@ -23,7 +23,10 @@ func Start(host string, port int) {
 
 	router.HandleFunc("/name/{PARAM}", NameParam)
 	router.HandleFunc("/bad", Bad)
-	router.HandleFunc("/data/{PARAM}", NameParam)
+	router.HandleFunc("/data", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "mess.html")
+	})
+	router.HandleFunc("/datamess", DataParam)
 	router.HandleFunc("/", YourHandler)
 
 	http.Handle("/", router)
@@ -32,17 +35,10 @@ func Start(host string, port int) {
 		log.Fatal(err)
 	}
 
-	// Bind to a port and pass our router in
-	//	log.Fatal(http.ListenAndServe(":8081", router))
-
-	// fmt.Println("Server is listening...")
-	// http.ListenAndServe(":8080", nil)
 }
 
 func YourHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Index Page")
-	// w.Write([]byte("Gorilla!\n"))
-	// fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
 }
 
 func Bad(w http.ResponseWriter, r *http.Request) {
@@ -53,6 +49,13 @@ func NameParam(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	param := vars["PARAM"]
 	response := fmt.Sprintf("Hello, %s!", param)
+	fmt.Fprint(w, response)
+}
+
+func DataParam(w http.ResponseWriter, r *http.Request) {
+	mes := r.FormValue("PARAM")
+
+	response := fmt.Sprintf("I got message:\n%s", mes)
 	fmt.Fprint(w, response)
 }
 
