@@ -29,11 +29,37 @@ func Start(host string, port int) {
 	router.HandleFunc("/data", func(w http.ResponseWriter, r *http.Request) {
 		b, err := ioutil.ReadAll(r.Body)
 		if err == nil {
-			fmt.Fprintf(w, "I got message:\n%q", b)
+			fmt.Fprintf(w, "I got message:\n%s", b)
 			//fmt.Fprintf(w, "ok")
 		} else {
 			fmt.Fprintf(w, "err %q\n", err)
 		}
+
+	})
+	router.HandleFunc("/headers", func(w http.ResponseWriter, r *http.Request) {
+
+		a0 := r.Header["A"]
+		a, err := strconv.Atoi(a0[0])
+		if err != nil {
+			fmt.Fprintf(w, "err %q\n", err)
+		}
+
+		b0 := r.Header["B"]
+		b, err := strconv.Atoi(b0[0])
+		if err != nil {
+			fmt.Fprintf(w, "err %q\n", err)
+		}
+		out := strconv.Itoa(a + b)
+
+		r.Header.Add("a+b", out)
+		w.Header().Add("a+b", out)
+		// b, err := ioutil.ReadAll(r.Header)
+		// if err == nil {
+		fmt.Fprintf(w, "%s", out)
+		//fmt.Fprintf(w, "ok")
+		// } else {
+		// 	fmt.Fprintf(w, "err %q\n", err)
+		// }
 
 	})
 
