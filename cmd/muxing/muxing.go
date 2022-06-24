@@ -25,13 +25,9 @@ func Start(host string, port int) {
 	router.HandleFunc("/bad", Bad)
 	router.HandleFunc("/data", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "mess.html")
-		mes := r.FormValue("PARAM")
-
-		response := fmt.Sprintf("I got message:\n%s", mes)
-		fmt.Fprint(w, response)
-
+		DataParam(w, r)
 	})
-	//	router.HandleFunc("/data", DataParam)
+	//	router.HandleFunc("/dataparam", DataParam)
 	router.HandleFunc("/", YourHandler)
 
 	http.Handle("/", router)
@@ -54,6 +50,13 @@ func NameParam(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	param := vars["PARAM"]
 	response := fmt.Sprintf("Hello, %s!", param)
+	fmt.Fprint(w, response)
+}
+
+func DataParam(w http.ResponseWriter, r *http.Request) {
+	mes := r.FormValue("PARAM")
+
+	response := fmt.Sprintf("I got message:\n%s", mes)
 	fmt.Fprint(w, response)
 }
 
