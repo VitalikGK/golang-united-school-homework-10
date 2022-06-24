@@ -23,11 +23,11 @@ func Start(host string, port int) {
 
 	router.HandleFunc("/name/{PARAM}", NameParam)
 	router.HandleFunc("/bad", Bad)
-	router.HandleFunc("/data", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "mess.html")
-		DataParam(w, r)
-	})
-	//	router.HandleFunc("/dataparam", DataParam)
+	// router.HandleFunc("/data", func(w http.ResponseWriter, r *http.Request) {
+	// 	http.ServeFile(w, r, "mess.html")
+	// 	DataParam(w, r)
+	// })
+	router.HandleFunc("/data/{PARAM}", DataParam).Methods(http.MethodPost)
 	router.HandleFunc("/", YourHandler)
 
 	http.Handle("/", router)
@@ -54,10 +54,15 @@ func NameParam(w http.ResponseWriter, r *http.Request) {
 }
 
 func DataParam(w http.ResponseWriter, r *http.Request) {
-	mes := r.FormValue("PARAM")
+	if r.Method == "POST" {
+		//mes := r.FormValue("PARAM")
+		vars := mux.Vars(r)
+		mes := vars["PARAM"]
 
-	response := fmt.Sprintf("I got message:\n%s", mes)
-	fmt.Fprint(w, response)
+		response := fmt.Sprintf("I got message:\n%s", mes)
+		fmt.Fprint(w, response)
+		fmt.Println("resp ", response)
+	}
 }
 
 //main /** starts program, gets HOST:PORT param and calls Start func.
