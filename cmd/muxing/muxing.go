@@ -52,7 +52,7 @@ func Bad(w http.ResponseWriter, r *http.Request) {
 func NameParam(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	param := vars["PARAM"]
-	response := fmt.Sprintf("Hello, %s", param)
+	response := fmt.Sprintf("Hello, %s!", param)
 	fmt.Fprint(w, response)
 }
 
