@@ -7,7 +7,6 @@ import (
 	"os"
 	"strconv"
 
-	//	"encoding/json"
 	"io/ioutil"
 
 	"github.com/gorilla/mux"
@@ -30,7 +29,6 @@ func Start(host string, port int) {
 		b, err := ioutil.ReadAll(r.Body)
 		if err == nil {
 			fmt.Fprintf(w, "I got message:\n%s", b)
-			//fmt.Fprintf(w, "ok")
 		} else {
 			fmt.Fprintf(w, "err %q\n", err)
 		}
@@ -51,27 +49,12 @@ func Start(host string, port int) {
 		}
 		out := strconv.Itoa(a + b)
 
-		r.Header.Add("a+b", out)
+		//		r.Header.Add("a+b", out)
 		w.Header().Add("a+b", out)
-		// b, err := ioutil.ReadAll(r.Header)
-		// if err == nil {
 		fmt.Fprintf(w, "%s", out)
-		//fmt.Fprintf(w, "ok")
-		// } else {
-		// 	fmt.Fprintf(w, "err %q\n", err)
-		// }
 
 	})
-
-	// router.Methods("POST").PathPrefix("/data")
-	// router.HandleFunc("/data", DataParam)
-	//router.HandleFunc("/datamess", DataParam).Methods(http.MethodPost)
-
 	router.HandleFunc("/", YourHandler)
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "mess.html")
-	})
-
 	http.Handle("/", router)
 	log.Println(fmt.Printf("Starting API server on %s:%d\n", host, port))
 	if err := http.ListenAndServe(fmt.Sprintf("%s:%d", host, port), router); err != nil {
