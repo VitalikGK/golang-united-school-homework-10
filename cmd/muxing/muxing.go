@@ -7,6 +7,9 @@ import (
 	"os"
 	"strconv"
 
+	//	"encoding/json"
+	"io/ioutil"
+
 	"github.com/gorilla/mux"
 )
 
@@ -23,12 +26,25 @@ func Start(host string, port int) {
 
 	router.HandleFunc("/name/{PARAM}", NameParam)
 	router.HandleFunc("/bad", Bad)
-	// router.HandleFunc("/data", func(w http.ResponseWriter, r *http.Request) {
-	// 	http.ServeFile(w, r, "mess.html")
-	// 	DataParam(w, r)
-	// })
-	router.HandleFunc("/data/{PARAM}", DataParam).Methods(http.MethodPost)
+	router.HandleFunc("/data", func(w http.ResponseWriter, r *http.Request) {
+		b, err := ioutil.ReadAll(r.Body)
+		if err == nil {
+			fmt.Fprintf(w, "I got message:\n%q", b)
+			//fmt.Fprintf(w, "ok")
+		} else {
+			fmt.Fprintf(w, "err %q\n", err)
+		}
+
+	})
+
+	// router.Methods("POST").PathPrefix("/data")
+	// router.HandleFunc("/data", DataParam)
+	//router.HandleFunc("/datamess", DataParam).Methods(http.MethodPost)
+
 	router.HandleFunc("/", YourHandler)
+	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "mess.html")
+	})
 
 	http.Handle("/", router)
 	log.Println(fmt.Printf("Starting API server on %s:%d\n", host, port))
@@ -55,13 +71,13 @@ func NameParam(w http.ResponseWriter, r *http.Request) {
 
 func DataParam(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-		//mes := r.FormValue("PARAM")
-		vars := mux.Vars(r)
-		mes := vars["PARAM"]
+		mes := r.FormValue("PARAM")
+		// vars := mux.Vars(r)
+		// mes := vars["PARAM"]
 
 		response := fmt.Sprintf("I got message:\n%s", mes)
 		fmt.Fprint(w, response)
-		fmt.Println("resp ", response)
+		//	fmt.Println("resp ", response)
 	}
 }
 
